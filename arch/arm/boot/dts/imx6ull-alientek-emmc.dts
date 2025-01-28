@@ -145,6 +145,44 @@
 			spi-max-frequency = <100000>;
 		};
 	};
+
+	alphaled {
+		#adderess-cells = <1>;
+		#size-cells = <1>;
+
+		compatible = "atkalphaled";
+		status = "okey";
+
+		/*reg属性包含各个寄存器地址和地址长度*/
+		reg = < 	0X020C406C	0X04 	/*CCM_CCGR1_BASE 使能时钟寄存器*/
+					0X020E0068	0X04 	/*SW_MUX_GPIO1_IO03_BASE 复用寄存器*/
+					0X020E02F4  0X04 	/*SW_PAD_GPIO1_IO03_BASE 配置寄存器*/
+					0X0209C000  0X04 	/*GPIO1_DR_BASE 数据寄存器*/
+					0X0209C004  0X04>;  /*GPIO1_GDIR_BASE 方向寄存器*/
+
+	};
+
+	gpioled {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "atkalpha-gpioled";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_led>; /*绑定led的引脚*/
+
+		led-gpio = <&gpio1 3 GPIO_ACTIVE_LOW>;
+		status = "okay";
+	};
+
+	beep {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "atkalpha-beep";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_beep>; /*绑定beep的引脚*/
+
+		beep-gpio = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
 };
 
 &cpu0 {
@@ -437,10 +475,12 @@
 		
 		pinctrl_tsc: tscgrp {
 			fsl,pins = <
+			/*
 			MX6UL_PAD_GPIO1_IO01__GPIO1_IO01	0xb0
 			MX6UL_PAD_GPIO1_IO02__GPIO1_IO02	0xb0
 			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0xb0
 			MX6UL_PAD_GPIO1_IO04__GPIO1_IO04	0xb0
+			*/
 			>;
 		};
 		
@@ -563,6 +603,19 @@
 			MX6UL_PAD_LCD_RESET__WDOG1_WDOG_ANY    0x30b0
 			>;
 		};
+
+		pinctrl_led: ledgrp {
+			fsl,pins = <
+			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0x10b0 
+			>;
+		};
+
+		pinctrl_beep: beepgrp {
+			fsl,pins = <
+			MX6ULL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x10b0  /* BEEP */
+			>;
+		};
+
 	};
 };
 
@@ -733,7 +786,7 @@
 &tsc {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_tsc>;
-	xnur-gpio = <&gpio1 3 GPIO_ACTIVE_LOW>;
+	/*xnur-gpio = <&gpio1 3 GPIO_ACTIVE_LOW>;*/
 	measure-delay-time = <0xffff>;
 	pre-charge-time = <0xfff>;
 	status = "okay";
